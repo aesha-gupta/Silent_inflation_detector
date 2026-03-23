@@ -3,78 +3,66 @@
 import { InsightCard as InsightCardType } from "@/types";
 
 const TYPE_CONFIG = {
-  warning: {
-    border: "var(--accent-red)",
-    badge: { bg: "rgba(239,68,68,0.15)", color: "#EF4444" },
-    label: "Warning",
-  },
-  positive: {
-    border: "var(--accent-green)",
-    badge: { bg: "rgba(16,185,129,0.15)", color: "#10B981" },
-    label: "Positive",
-  },
-  flag: {
-    border: "var(--accent-amber)",
-    badge: { bg: "rgba(245,158,11,0.15)", color: "#F59E0B" },
-    label: "Flag",
-  },
-  info: {
-    border: "#60A5FA",
-    badge: { bg: "rgba(96,165,250,0.15)", color: "#60A5FA" },
-    label: "Info",
-  },
+  warning: { borderColor: "var(--accent-red)", labelColor: "#EF4444", label: "Warning" },
+  positive: { borderColor: "var(--accent-lime)", labelColor: "#51FC02", label: "Positive" },
+  flag:     { borderColor: "var(--accent-amber)", labelColor: "#F59E0B", label: "Flag" },
+  info:     { borderColor: "var(--accent-teal)", labelColor: "#2FF4DD", label: "Info" },
 };
 
-interface InsightCardsProps {
-  cards: InsightCardType[];
-}
+interface InsightCardsProps { cards: InsightCardType[]; }
 
 export default function InsightCards({ cards }: InsightCardsProps) {
   if (!cards.length) return null;
 
   return (
     <div>
-      <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#E5E7EB", marginBottom: "1rem" }}>
-        Insights
-      </h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1rem" }}>
+      <p className="section-label">Key Insights</p>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1px", background: "rgba(93,64,56,0.2)" }}>
         {cards.map((card, i) => {
-          const config = TYPE_CONFIG[card.type] ?? TYPE_CONFIG.info;
+          const cfg = TYPE_CONFIG[card.type] ?? TYPE_CONFIG.info;
           return (
             <div
               key={i}
-              className="card slide-up"
+              className="slide-up"
               style={{
-                borderLeft: `4px solid ${config.border}`,
-                animationDelay: `${i * 50}ms`,
+                background: "var(--bg-card)",
+                borderLeft: `2px solid ${cfg.borderColor}`,
+                padding: "1.25rem 1.25rem 1.25rem 1rem",
+                animationDelay: `${i * 60}ms`,
                 opacity: 0,
                 animationFillMode: "forwards",
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.6rem" }}>
-                <span
-                  className="badge"
-                  style={{
-                    backgroundColor: config.badge.bg,
-                    color: config.badge.color,
-                    border: `1px solid ${config.badge.color}40`,
-                  }}
-                >
-                  {config.label}
+                <span style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: "0.58rem", fontWeight: 700,
+                  color: cfg.labelColor,
+                  textTransform: "uppercase", letterSpacing: "0.1em",
+                  border: `1px solid ${cfg.labelColor}40`,
+                  padding: "0.15rem 0.5rem", borderRadius: 1,
+                }}>
+                  {cfg.label}
                 </span>
                 {card.category && (
-                  <span
-                    className="badge"
-                    style={{ backgroundColor: "rgba(31,41,55,0.8)", color: "#6B7280", border: "1px solid #374151" }}
-                  >
+                  <span style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: "0.58rem", fontWeight: 700,
+                    color: "var(--text-dim)",
+                    textTransform: "uppercase", letterSpacing: "0.1em",
+                    border: "1px solid rgba(93,64,56,0.25)",
+                    padding: "0.15rem 0.5rem", borderRadius: 1,
+                  }}>
                     {card.category}
                   </span>
                 )}
               </div>
-              <p style={{ fontWeight: 700, fontSize: "0.9rem", color: "#E5E7EB", marginBottom: "0.4rem", lineHeight: 1.4 }}>
+              <p style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.88rem", color: "var(--text-primary)", marginBottom: "0.4rem", lineHeight: 1.4 }}>
                 {card.title}
               </p>
-              <p style={{ fontSize: "0.82rem", color: "#9CA3AF", lineHeight: 1.6 }}>{card.body}</p>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "0.8rem", color: "var(--text-muted)", lineHeight: 1.65 }}>
+                {card.body}
+              </p>
             </div>
           );
         })}

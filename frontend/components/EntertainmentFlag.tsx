@@ -8,49 +8,40 @@ export default function EntertainmentFlag({ amount }: EntertainmentFlagProps) {
   if (amount <= 0) return null;
 
   return (
-    <div
-      style={{
-        backgroundColor: "rgba(245,158,11,0.06)",
-        border: "1px solid rgba(245,158,11,0.3)",
-        borderRadius: "0.75rem",
-        padding: "1.25rem 1.5rem",
-        display: "flex",
-        alignItems: "flex-start",
-        gap: "1rem",
-      }}
-    >
-      <div
-        style={{
-          flexShrink: 0,
-          width: "2rem",
-          height: "2rem",
-          backgroundColor: "rgba(245,158,11,0.15)",
-          borderRadius: "9999px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "1rem",
-          marginTop: "0.1rem",
-        }}
-      >
-        ⚑
+    <div style={{
+      backgroundColor: "rgba(245,158,11,0.04)",
+      border: "1px solid rgba(245,158,11,0.2)",
+      borderLeft: "3px solid var(--accent-amber)",
+      borderRadius: 2,
+      padding: "1.25rem 1.5rem",
+      display: "flex",
+      alignItems: "flex-start",
+      gap: "1rem",
+    }}>
+      <div style={{
+        flexShrink: 0,
+        fontFamily: "var(--font-display)",
+        fontSize: "0.65rem",
+        fontWeight: 700,
+        color: "var(--accent-amber)",
+        textTransform: "uppercase",
+        letterSpacing: "0.12em",
+        border: "1px solid rgba(245,158,11,0.25)",
+        padding: "0.2rem 0.5rem",
+        borderRadius: 1,
+        marginTop: "0.15rem",
+        whiteSpace: "nowrap",
+      }}>
+        ⚑ Flag
       </div>
       <div>
-        <p
-          style={{
-            fontWeight: 700,
-            fontSize: "0.95rem",
-            color: "#F59E0B",
-            marginBottom: "0.35rem",
-          }}
-        >
+        <p style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.88rem", color: "var(--accent-amber)", marginBottom: "0.4rem", letterSpacing: "0.02em" }}>
           Entertainment spending is invisible to policymakers
         </p>
-        <p style={{ fontSize: "0.875rem", color: "#D1D5DB", lineHeight: 1.6 }}>
-          ₹{amount.toLocaleString("en-IN")}/month spent on entertainment is{" "}
-          <strong style={{ color: "#F59E0B" }}>not included</strong> in RBI&apos;s
-          official CPI Urban basket — meaning your true cost of living is
-          underrepresented in government inflation data.
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--text-muted)", lineHeight: 1.65 }}>
+          ₹{amount.toLocaleString("en-IN")}/month on entertainment is{" "}
+          <strong style={{ color: "var(--text-primary)" }}>not included</strong> in RBI&apos;s
+          official CPI Urban basket — meaning your true cost of living is underrepresented in government data.
         </p>
       </div>
     </div>

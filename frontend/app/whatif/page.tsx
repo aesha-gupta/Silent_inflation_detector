@@ -31,53 +31,81 @@ export default function WhatIfPage() {
   }, []);
 
   return (
-    <main style={{ minHeight: "100vh", backgroundColor: "#0A0F1E", padding: "2rem 1.5rem", paddingBottom: "4rem" }}>
+    <main style={{ minHeight: "100vh", backgroundColor: "var(--bg-primary)", padding: "2.5rem 1.5rem 5rem" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
-        {/* Header */}
-        <div style={{ marginBottom: "2rem" }}>
-          <Link href="/dashboard" style={{ fontSize: "0.78rem", color: "#6B7280", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.35rem", marginBottom: "1.25rem" }}>
+        {/* ── Header ── */}
+        <div style={{ marginBottom: "2.5rem" }}>
+          <Link href="/dashboard" style={{
+            display: "inline-flex", alignItems: "center", gap: "0.4rem",
+            fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--text-dim)",
+            letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "none",
+            marginBottom: "1.25rem", transition: "color 0.15s",
+          }}
+            onMouseEnter={e => (e.currentTarget.style.color = "var(--text-muted)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "var(--text-dim)")}
+          >
             ← Dashboard
           </Link>
-          <h1 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#E5E7EB", marginBottom: "0.5rem" }}>What-If Simulator</h1>
-          <p style={{ color: "#6B7280", fontSize: "0.875rem", lineHeight: 1.6, maxWidth: "580px" }}>
-            Drag the slider to a new monthly spend amount and see how it shifts your personal inflation rate in real time.
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--accent-teal)", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+            ◈ Scenario Analysis
+          </p>
+          <h1 className="display-heading" style={{ fontSize: "clamp(1.4rem, 3vw, 2.2rem)", marginBottom: "0.6rem" }}>
+            What-If Simulator
+          </h1>
+          <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", lineHeight: 1.7, maxWidth: 560, fontFamily: "var(--font-body)" }}>
+            Adjust your monthly category spending with sliders and see how it shifts your personal inflation rate in real time.
           </p>
         </div>
 
+        {/* ── Loading ── */}
         {loading && (
-          <div style={{ color: "#6B7280", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <svg style={{ animation: "spin 1s linear infinite", width: 16, height: 16 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontSize: "0.78rem" }}>
+            <svg style={{ animation: "spin 1s linear infinite", width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <circle cx="12" cy="12" r="10" strokeOpacity="0.3" />
               <path d="M12 2a10 10 0 0 1 10 10" />
             </svg>
-            Loading…
+            Loading base spending…
           </div>
         )}
 
+        {/* ── No data ── */}
         {!loading && noData && (
-          <div style={{ backgroundColor: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: "0.75rem", padding: "2rem", textAlign: "center" }}>
-            <p style={{ fontSize: "1.8rem", marginBottom: "0.75rem" }}>📋</p>
-            <p style={{ fontWeight: 700, color: "#F59E0B", marginBottom: "0.5rem" }}>No spending data yet</p>
-            <p style={{ color: "#6B7280", fontSize: "0.875rem", marginBottom: "1.5rem" }}>Submit at least 1 month of spending first.</p>
-            <Link href="/" className="btn-primary" style={{ display: "inline-block" }}>Add Spending →</Link>
+          <div style={{
+            backgroundColor: "rgba(252, 68, 2, 0.05)",
+            border: "1px solid rgba(252, 68, 2, 0.2)",
+            borderRadius: 2,
+            padding: "2rem",
+            textAlign: "center",
+          }}>
+            <p style={{ fontFamily: "var(--font-display)", fontWeight: 700, color: "var(--accent-orange)", fontSize: "0.8rem", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+              No spending data yet
+            </p>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", marginBottom: "1.5rem", fontFamily: "var(--font-body)" }}>
+              Submit at least 1 month of spending first.
+            </p>
+            <Link href="/" className="btn-primary">Add Spending →</Link>
           </div>
         )}
 
+        {/* ── Simulator ── */}
         {!loading && base && (
-          /* 2-column layout: simulator left, sidebar right */
-          <div style={{ display: "flex", gap: "2rem", alignItems: "flex-start" }}>
+          <div style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start" }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div className="card">
-                <div style={{ marginBottom: "1.5rem", paddingBottom: "1rem", borderBottom: "1px solid #1F2937" }}>
-                  <p style={{ fontSize: "0.72rem", color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.25rem" }}>Base month</p>
-                  <p className="font-mono-numbers" style={{ fontSize: "1.1rem", fontWeight: 700, color: "#00D4AA" }}>{base.month}</p>
+                {/* Base month label */}
+                <div style={{ marginBottom: "1.5rem", paddingBottom: "1rem", borderBottom: "1px solid rgba(93,64,56,0.2)" }}>
+                  <p style={{ fontFamily: "var(--font-display)", fontSize: "0.62rem", fontWeight: 700, color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: "0.3rem" }}>
+                    Base Month
+                  </p>
+                  <p className="font-mono-numbers" style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--accent-teal)" }}>
+                    {base.month}
+                  </p>
                 </div>
                 <WhatIfSimulator baseSpending={base} />
               </div>
             </div>
 
-            {/* Sticky spending sidebar */}
             {Object.keys(rawSpending).length > 0 && (
               <SpendingSidebar spending={rawSpending} month={rawSpending.month as any ?? base.month} />
             )}

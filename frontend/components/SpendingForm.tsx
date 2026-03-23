@@ -11,7 +11,7 @@ const CATEGORIES = [
   { key: "clothing", label: "Clothing & Footwear" },
   { key: "healthcare", label: "Healthcare" },
   { key: "entertainment", label: "Entertainment", flag: true },
-  { key: "others", label: "Others / Miscellaneous" },
+  { key: "others", label: "Others / Misc." },
 ];
 
 export default function SpendingForm() {
@@ -33,24 +33,15 @@ export default function SpendingForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!month) {
-      showToast("Please select a month.", "error");
-      return;
-    }
-
+    if (!month) { showToast("Please select a month.", "error"); return; }
     const payload: Record<string, number | string> = { month };
-    let hasNegative = false;
+    let hasNeg = false;
     for (const cat of CATEGORIES) {
       const v = parseFloat(values[cat.key] || "0");
-      if (v < 0) { hasNegative = true; break; }
+      if (v < 0) { hasNeg = true; break; }
       payload[cat.key] = v;
     }
-
-    if (hasNegative) {
-      showToast("Spending values cannot be negative.", "error");
-      return;
-    }
-
+    if (hasNeg) { showToast("Values cannot be negative.", "error"); return; }
     setLoading(true);
     try {
       await api.submitSpending(payload);
@@ -63,59 +54,81 @@ export default function SpendingForm() {
     }
   };
 
+  const labelStyle: React.CSSProperties = {
+    display: "block",
+    marginBottom: "0.4rem",
+    fontFamily: "var(--font-display)",
+    fontSize: "0.62rem",
+    fontWeight: 700,
+    color: "var(--text-dim)",
+    textTransform: "uppercase",
+    letterSpacing: "0.12em",
+  };
+
   return (
     <div style={{ position: "relative" }}>
       {/* Toast */}
       {toast && (
-        <div
-          style={{
-            position: "fixed",
-            top: "1.5rem",
-            right: "1.5rem",
-            backgroundColor: toast.type === "error" ? "#EF4444" : "#10B981",
-            color: "#fff",
-            padding: "0.75rem 1.25rem",
-            borderRadius: "0.5rem",
-            fontWeight: 600,
-            fontSize: "0.875rem",
-            zIndex: 999,
-            boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
-          }}
-        >
+        <div style={{
+          position: "fixed", top: "1.5rem", right: "1.5rem",
+          backgroundColor: toast.type === "error" ? "var(--accent-red)" : "var(--accent-lime)",
+          color: toast.type === "error" ? "#fff" : "#000",
+          padding: "0.65rem 1.25rem", borderRadius: 2,
+          fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.75rem",
+          letterSpacing: "0.08em", textTransform: "uppercase", zIndex: 999,
+          border: `1px solid ${toast.type === "error" ? "var(--accent-red)" : "var(--accent-lime)"}`,
+        }}>
           {toast.msg}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-        {/* Month picker */}
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+        {/* Month */}
         <div>
-          <label style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.8rem", color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-            Month
-          </label>
+          <label style={labelStyle}>Select Month</label>
           <input
             type="month"
             value={month}
             onChange={(e) => setMonth(e.target.value)}
-            className="input-field font-mono-numbers"
+            className="input-field"
             required
-            style={{ maxWidth: "16rem" }}
+            style={{ maxWidth: "14rem" }}
           />
         </div>
 
-        {/* Category inputs in 2-col grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
+        {/* 2-col grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem 1.5rem" }}>
           {CATEGORIES.map((cat) => (
             <div key={cat.key}>
-              <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem", fontSize: "0.8rem", color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+              <label style={labelStyle}>
                 {cat.label}
                 {cat.flag && (
-                  <span style={{ backgroundColor: "rgba(245,158,11,0.15)", color: "#F59E0B", fontSize: "0.62rem", fontWeight: 700, padding: "0.15rem 0.5rem", borderRadius: "9999px", border: "1px solid rgba(245,158,11,0.3)", letterSpacing: "0.06em" }}>
-                    ⚑ Not tracked by RBI CPI Urban
+                  <span style={{
+                    marginLeft: "0.5rem",
+                    backgroundColor: "rgba(245,158,11,0.1)",
+                    color: "var(--accent-amber)",
+                    border: "1px solid rgba(245,158,11,0.25)",
+                    fontSize: "0.55rem", fontWeight: 700,
+                    padding: "0.1rem 0.4rem", letterSpacing: "0.06em",
+                    textTransform: "uppercase", borderRadius: 1,
+                  }}>
+                    ⚑ Extras
                   </span>
                 )}
               </label>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <span style={{ backgroundColor: "#1F2937", padding: "0.5rem 0.6rem", borderRadius: "0.5rem 0 0 0.5rem", fontSize: "0.875rem", color: "#6B7280", border: "1px solid #1F2937", borderRight: "none" }}>₹</span>
+              <div style={{ display: "flex", alignItems: "stretch" }}>
+                <span style={{
+                  backgroundColor: "var(--bg-card-low)",
+                  border: "1px solid rgba(93,64,56,0.35)",
+                  borderRight: "none",
+                  borderRadius: "2px 0 0 2px",
+                  padding: "0.55rem 0.65rem",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.8rem",
+                  color: "var(--text-muted)",
+                  display: "flex",
+                  alignItems: "center",
+                }}>₹</span>
                 <input
                   type="number"
                   min="0"
@@ -123,32 +136,29 @@ export default function SpendingForm() {
                   placeholder="0"
                   value={values[cat.key] || ""}
                   onChange={(e) => handleChange(cat.key, e.target.value)}
-                  className="input-field font-mono-numbers"
-                  style={{ borderRadius: "0 0.5rem 0.5rem 0", borderLeft: "none" }}
+                  className="input-field"
+                  style={{ borderRadius: "0 2px 2px 0", borderLeft: "none" }}
                 />
               </div>
             </div>
           ))}
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="btn-primary"
-          style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: "0.5rem" }}
-        >
-          {loading ? (
-            <>
-              <svg style={{ animation: "spin 1s linear infinite", width: 16, height: 16 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <circle cx="12" cy="12" r="10" strokeOpacity="0.3" />
-                <path d="M12 2a10 10 0 0 1 10 10" />
-              </svg>
-              Saving…
-            </>
-          ) : (
-            "Save & Go to Dashboard →"
-          )}
-        </button>
+        <div>
+          <button type="submit" disabled={loading} className="btn-primary" style={{ width: "100%", justifyContent: "center", padding: "0.9rem 2rem" }}>
+            {loading ? (
+              <>
+                <svg style={{ animation: "spin 1s linear infinite", width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <circle cx="12" cy="12" r="10" strokeOpacity="0.3" />
+                  <path d="M12 2a10 10 0 0 1 10 10" />
+                </svg>
+                Saving…
+              </>
+            ) : (
+              "Calculate My Inflation →"
+            )}
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -1,15 +1,8 @@
 "use client";
 
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-  LabelList,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, Cell, LabelList,
 } from "recharts";
 
 interface CategoryBreakdownProps {
@@ -19,17 +12,15 @@ interface CategoryBreakdownProps {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div
-      style={{
-        backgroundColor: "#111827",
-        border: "1px solid #1F2937",
-        borderRadius: "0.5rem",
-        padding: "0.6rem 0.9rem",
-        fontSize: "0.8rem",
-      }}
-    >
-      <p style={{ color: "#6B7280", marginBottom: "0.2rem" }}>{label}</p>
-      <p style={{ fontFamily: "var(--font-mono), monospace", color: "#00D4AA" }}>
+    <div style={{
+      backgroundColor: "var(--bg-card-low)",
+      border: "1px solid rgba(93,64,56,0.4)",
+      borderRadius: 2,
+      padding: "0.6rem 0.9rem",
+      fontFamily: "var(--font-display)",
+    }}>
+      <p style={{ fontSize: "0.65rem", color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.2rem" }}>{label}</p>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem", color: "var(--accent-teal)", fontWeight: 700 }}>
         {payload[0]?.value?.toFixed(3)} pp
       </p>
     </div>
@@ -48,47 +39,41 @@ export default function CategoryBreakdown({ contributions }: CategoryBreakdownPr
 
   return (
     <div className="card">
-      <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#E5E7EB", marginBottom: "0.5rem" }}>
-        Category Inflation Contributions
-      </h2>
-      <p style={{ fontSize: "0.8rem", color: "#6B7280", marginBottom: "1.25rem" }}>
+      <p className="section-label">Category Contributions</p>
+      <p style={{ fontFamily: "var(--font-body)", fontSize: "0.78rem", color: "var(--text-muted)", marginBottom: "1.5rem", lineHeight: 1.6 }}>
         Percentage point contribution to your personal inflation rate (latest month)
       </p>
-      <ResponsiveContainer width="100%" height={280}>
-        <BarChart
-          data={data}
-          layout="vertical"
-          margin={{ top: 0, right: 60, left: 10, bottom: 0 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" horizontal={false} />
+      <ResponsiveContainer width="100%" height={260}>
+        <BarChart data={data} layout="vertical" margin={{ top: 0, right: 64, left: 12, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="2 4" stroke="rgba(93,64,56,0.25)" horizontal={false} />
           <XAxis
             type="number"
-            tick={{ fill: "#6B7280", fontSize: 10, fontFamily: "var(--font-mono), monospace" }}
-            axisLine={{ stroke: "#1F2937" }}
+            tick={{ fill: "var(--text-dim)", fontSize: 9, fontFamily: "'IBM Plex Mono', monospace" }}
+            axisLine={{ stroke: "rgba(93,64,56,0.3)" }}
             tickLine={false}
             tickFormatter={(v) => v.toFixed(2)}
           />
           <YAxis
             type="category"
             dataKey="category"
-            tick={{ fill: "#E5E7EB", fontSize: 12 }}
-            axisLine={{ stroke: "#1F2937" }}
+            tick={{ fill: "var(--text-muted)", fontSize: 11, fontFamily: "'Space Grotesk', sans-serif" }}
+            axisLine={{ stroke: "rgba(93,64,56,0.3)" }}
             tickLine={false}
             width={90}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(31,41,55,0.4)" }} />
-          <Bar dataKey="value" radius={4} maxBarSize={24}>
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(93,64,56,0.12)" }} />
+          <Bar dataKey="value" radius={0} maxBarSize={18}>
             {data.map((entry) => (
               <Cell
                 key={entry.category}
-                fill={entry.value === maxVal ? "#00D4AA" : "#374151"}
+                fill={entry.value === maxVal ? "#FC4402" : "rgba(47,244,221,0.35)"}
               />
             ))}
             <LabelList
               dataKey="value"
               position="right"
-              formatter={(v: number) => v.toFixed(3)}
-              style={{ fill: "#9CA3AF", fontSize: 10, fontFamily: "var(--font-mono), monospace" }}
+              formatter={(v: any) => typeof v === 'number' ? v.toFixed(3) : v}
+              style={{ fill: "var(--text-dim)", fontSize: 9, fontFamily: "'IBM Plex Mono', monospace" }}
             />
           </Bar>
         </BarChart>

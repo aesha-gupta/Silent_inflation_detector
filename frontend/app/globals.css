@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #0A0F1E;
+    --bg-card: #111827;
+    --bg-card-border: #1F2937;
+    --accent-teal: #00D4AA;
+    --accent-amber: #F59E0B;
+    --accent-red: #EF4444;
+    --accent-green: #10B981;
+    --text-muted: #6B7280;
+    --text-body: #E5E7EB;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: var(--font-sora), system-ui, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-body);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-body);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0A0F1E;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1F2937;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #374151;
+  }
+}
+
+@layer components {
+  /* Card */
+  .card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--bg-card-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+  }
+
+  /* Stat card */
+  .stat-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--bg-card-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  /* Input */
+  .input-field {
+    width: 100%;
+    background-color: #0A0F1E;
+    border: 1px solid #1F2937;
+    border-radius: 0.5rem;
+    color: var(--text-body);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .input-field:focus {
+    border-color: var(--accent-teal);
+    box-shadow: 0 0 0 2px rgba(0, 212, 170, 0.15);
+  }
+
+  /* Button */
+  .btn-primary {
+    background-color: var(--accent-teal);
+    color: #0A0F1E;
+    font-weight: 700;
+    border-radius: 0.5rem;
+    padding: 0.75rem 2rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--accent-teal);
+    border: 1px solid var(--accent-teal);
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+  .btn-secondary:hover {
+    background-color: rgba(0, 212, 170, 0.08);
+  }
+
+  /* Badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Insight card left border variants */
+  .insight-warning { border-left: 4px solid var(--accent-red); }
+  .insight-positive { border-left: 4px solid var(--accent-green); }
+  .insight-flag     { border-left: 4px solid var(--accent-amber); }
+  .insight-info     { border-left: 4px solid #60A5FA; }
+
+  /* Slide-in animation */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .slide-up {
+    animation: slideUp 0.4s ease-out forwards;
+  }
+
+  /* Mono font for numbers */
+  .font-mono-numbers {
+    font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  }
+}

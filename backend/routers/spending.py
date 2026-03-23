@@ -13,7 +13,7 @@ from models.schemas import MonthlySpending
 
 router = APIRouter(prefix="/spending", tags=["spending"])
 
-DB_PATH = Path(__file__).parent.parent / "spending.db"
+DB_PATH = Path(__file__).parent.parent / "spending.db"  # backend/spending.db
 
 
 def _get_conn() -> sqlite3.Connection:

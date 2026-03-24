@@ -30,90 +30,90 @@ export default function WhatIfPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  return (
-    <main style={{ minHeight: "100vh", backgroundColor: "var(--bg-primary)", padding: "2.5rem 1.5rem 5rem" }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+  /* ── Loading ── */
+  if (loading) {
+    return (
+      <div className="flex-1 w-full min-h-(100vh) flex items-center justify-center p-8">
+        <div className="font-mono text-xs text-text-muted flex items-center gap-2">
+          <span className="inline-block w-2 h-2 bg-accent-teal animate-pulse" />
+          ESTABLISHING SECURE HANDSHAKE...
+        </div>
+      </div>
+    );
+  }
 
-        {/* ── Header ── */}
-        <div style={{ marginBottom: "2.5rem" }}>
-          <Link href="/dashboard" style={{
-            display: "inline-flex", alignItems: "center", gap: "0.4rem",
-            fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--text-dim)",
-            letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "none",
-            marginBottom: "1.25rem", transition: "color 0.15s",
-          }}
-            onMouseEnter={e => (e.currentTarget.style.color = "var(--text-muted)")}
-            onMouseLeave={e => (e.currentTarget.style.color = "var(--text-dim)")}
-          >
-            ← Dashboard
-          </Link>
-          <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--accent-teal)", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
-            ◈ Scenario Analysis
+  /* ── No data ── */
+  if (noData) {
+    return (
+      <div className="w-full min-h-(100vh) flex items-center justify-center pad-grid border-b border-[var(--frame-color)]">
+        <div className="text-center">
+          <p className="font-mono text-xs text-accent-orange uppercase tracking-widest mb-4">
+            [ Missing Baseline Data ]
           </p>
-          <h1 className="display-heading" style={{ fontSize: "clamp(1.4rem, 3vw, 2.2rem)", marginBottom: "0.6rem" }}>
-            What-If Simulator
-          </h1>
-          <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", lineHeight: 1.7, maxWidth: 560, fontFamily: "var(--font-body)" }}>
-            Adjust your monthly category spending with sliders and see how it shifts your personal inflation rate in real time.
-          </p>
+          <h2 className="brutalist-heading text-4xl mb-4">NO TELEMETRY RECORDED</h2>
+          <Link href="/" className="btn-primary mt-4">INPUT BASELINE →</Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col lg:flex-row w-full h-full">
+
+      {/* ── Main Simulator Column ── */}
+      <div className="flex-1 flex flex-col border-r border-[var(--frame-color)] relative">
+        
+        {/* Header Block */}
+        <div className="pad-grid border-b border-[var(--frame-color)] flex justify-between items-end relative overflow-hidden bg-[var(--bg-card)]">
+          <div className="z-10">
+            <Link href="/dashboard" className="inline-block hover-reveal font-mono text-[10px] text-text-muted tracking-widest uppercase mb-6">
+              ← RETURN TO DASHBOARD
+            </Link>
+            <p className="font-mono text-[10px] text-accent-teal tracking-widest uppercase mb-2">
+              .02 // SCENARIO ANALYSIS
+            </p>
+            <h1 className="brutalist-heading" style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)" }}>
+              WHAT-IF ENGINE
+            </h1>
+          </div>
+          <div className="z-10 text-right">
+            <p className="font-mono text-[10px] text-text-muted uppercase tracking-[0.2em] mb-1">
+              Active Baseline
+            </p>
+            <p className="font-mono-numbers text-accent-teal text-xl font-bold">
+              {base?.month}
+            </p>
+          </div>
+          {/* Decorative giant digit */}
+          <div className="absolute -bottom-8 -right-4 font-display font-black text-[10rem] text-[var(--frame-color)] opacity-20 leading-none select-none">
+            02
+          </div>
         </div>
 
-        {/* ── Loading ── */}
-        {loading && (
-          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontSize: "0.78rem" }}>
-            <svg style={{ animation: "spin 1s linear infinite", width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <circle cx="12" cy="12" r="10" strokeOpacity="0.3" />
-              <path d="M12 2a10 10 0 0 1 10 10" />
-            </svg>
-            Loading base spending…
+        {/* ── Simulator Grid ── */}
+        {base && (
+          <div className="pad-grid border-b border-[var(--frame-color)] relative">
+            <div className="absolute top-0 left-0 bg-[var(--frame-color)] text-[var(--bg-primary)] text-[9px] font-mono px-2 py-0.5">SIMULATOR_CORE</div>
+            <WhatIfSimulator baseSpending={base} />
           </div>
         )}
 
-        {/* ── No data ── */}
-        {!loading && noData && (
-          <div style={{
-            backgroundColor: "rgba(252, 68, 2, 0.05)",
-            border: "1px solid rgba(252, 68, 2, 0.2)",
-            borderRadius: 2,
-            padding: "2rem",
-            textAlign: "center",
-          }}>
-            <p style={{ fontFamily: "var(--font-display)", fontWeight: 700, color: "var(--accent-orange)", fontSize: "0.8rem", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
-              No spending data yet
-            </p>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", marginBottom: "1.5rem", fontFamily: "var(--font-body)" }}>
-              Submit at least 1 month of spending first.
-            </p>
-            <Link href="/" className="btn-primary">Add Spending →</Link>
-          </div>
-        )}
-
-        {/* ── Simulator ── */}
-        {!loading && base && (
-          <div style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start" }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div className="card">
-                {/* Base month label */}
-                <div style={{ marginBottom: "1.5rem", paddingBottom: "1rem", borderBottom: "1px solid rgba(93,64,56,0.2)" }}>
-                  <p style={{ fontFamily: "var(--font-display)", fontSize: "0.62rem", fontWeight: 700, color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: "0.3rem" }}>
-                    Base Month
-                  </p>
-                  <p className="font-mono-numbers" style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--accent-teal)" }}>
-                    {base.month}
-                  </p>
-                </div>
-                <WhatIfSimulator baseSpending={base} />
-              </div>
-            </div>
-
-            {Object.keys(rawSpending).length > 0 && (
-              <SpendingSidebar spending={rawSpending} month={rawSpending.month as any ?? base.month} />
-            )}
-          </div>
-        )}
-
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
-    </main>
+
+      {/* ── Sidebar Column ── */}
+      <div className="w-full lg:w-[320px] lg:min-h-[calc(100vh-3.5rem)] bg-[var(--bg-card)] relative">
+        <div className="sticky top-0 h-full">
+          {Object.keys(rawSpending).length > 0 ? (
+            <SpendingSidebar
+              spending={rawSpending}
+              month={(rawSpending.month as unknown as string) ?? base?.month ?? ""}
+            />
+          ) : (
+            <div className="p-8 text-center text-text-dim font-mono text-xs">No Baseline Data</div>
+          )}
+        </div>
+      </div>
+
+    </div>
   );
 }

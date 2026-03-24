@@ -31,15 +31,16 @@ export default function SpendingForm() {
     setValues((prev) => ({ ...prev, [key]: clean }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.SyntheticEvent) => {
+    if (e) e.preventDefault();
     if (!month) { showToast("Please select a month.", "error"); return; }
     const payload: Record<string, number | string> = { month };
     let hasNeg = false;
     for (const cat of CATEGORIES) {
       const v = parseFloat(values[cat.key] || "0");
-      if (v < 0) { hasNeg = true; break; }
-      payload[cat.key] = v;
+      const safeV = isNaN(v) ? 0 : v;
+      if (safeV < 0) { hasNeg = true; break; }
+      payload[cat.key] = safeV;
     }
     if (hasNeg) { showToast("Values cannot be negative.", "error"); return; }
     setLoading(true);
@@ -82,7 +83,7 @@ export default function SpendingForm() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
         {/* Month */}
         <div>
           <label style={labelStyle}>Select Month</label>
@@ -145,7 +146,7 @@ export default function SpendingForm() {
         </div>
 
         <div>
-          <button type="submit" disabled={loading} className="btn-primary" style={{ width: "100%", justifyContent: "center", padding: "0.9rem 2rem" }}>
+          <button type="button" onClick={handleSubmit} disabled={loading} className="btn-primary" style={{ width: "100%", justifyContent: "center", padding: "0.9rem 2rem" }}>
             {loading ? (
               <>
                 <svg style={{ animation: "spin 1s linear infinite", width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -159,7 +160,7 @@ export default function SpendingForm() {
             )}
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

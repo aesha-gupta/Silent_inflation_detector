@@ -1,135 +1,75 @@
-"use client";
-
 import SpendingForm from "@/components/SpendingForm";
 
-export default function HomePage() {
+export default function Home() {
   return (
-    <main style={{ minHeight: "100vh", backgroundColor: "var(--bg-primary)", paddingBottom: "6rem" }}>
-
-      {/* ── Hero ── */}
-      <section style={{ textAlign: "center", padding: "6rem 1.5rem 4rem" }}>
-        <div className="badge-pill" style={{ marginBottom: "2rem", display: "inline-flex" }}>
-          <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "var(--accent-teal)", flexShrink: 0 }} />
-          CPI Urban India — Live Data
-        </div>
-
-        <h1
-          className="display-heading"
-          style={{
-            fontSize: "clamp(2.2rem, 5.5vw, 4rem)",
-            maxWidth: 720,
-            margin: "0 auto 1.5rem",
-            lineHeight: 1.08,
-          }}
-        >
-          Your inflation rate.{" "}
-          <span style={{ color: "var(--accent-orange)" }}>Not the government&apos;s average.</span>
-        </h1>
-
-        <p style={{
-          fontFamily: "var(--font-body)",
-          fontSize: "clamp(0.95rem, 2vw, 1.05rem)",
-          color: "var(--text-muted)",
-          maxWidth: 560,
-          margin: "0 auto",
-          lineHeight: 1.75,
-        }}>
-          India&apos;s official CPI is an average across all households.
-          We calculate yours — based on how you <em style={{ color: "var(--text-primary)", fontStyle: "normal" }}>actually</em> spend.
-        </p>
-      </section>
-
-      {/* ── Spending form card ── */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 1.5rem" }}>
-        <div className="card" style={{ marginBottom: "5rem" }}>
-          {/* Card header */}
-          <div style={{ marginBottom: "1.75rem" }}>
-            <p className="section-label">Monthly Spending Input</p>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--text-muted)" }}>
-              All amounts in Indian Rupees (₹). Leave blank to treat as ₹0.
+    <div className="flex flex-col w-full h-full">
+      {/* Structural Hero Grid */}
+      <section className="hero-grid">
+        {/* Left Column - Huge Branding */}
+        <div className="hero-cell overflow-hidden group">
+          <div className="cell-marker">.01 // DATA INGESTION</div>
+          
+          <div className="mt-auto relative z-10 transition-transform duration-700 ease-out group-hover:translate-x-4">
+            <h2 className="brutalist-sub">YOUR PERSONAL INFLATION</h2>
+            <h1 className="brutalist-heading">
+              NOT THE <br />
+              <span className="text-transparent" style={{ WebkitTextStroke: "1px var(--accent-orange)" }}>
+                AVERAGE
+              </span>
+            </h1>
+            <p className="mt-8 max-w-md font-mono text-sm text-text-muted leading-relaxed">
+              India's official CPI is a broad average. We map your exact spending mix against MOSPI datasets to uncover the real rate eroding your wealth.
             </p>
           </div>
-          <SpendingForm />
-        </div>
-
-        {/* ── How It Works ── */}
-        <div>
-          <p className="section-label">How It Works</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1px", background: "rgba(93,64,56,0.2)" }}>
-            {[
-              {
-                num: "01",
-                title: "Enter your monthly spend",
-                body: "Split your expenses across 7 categories — Food, Housing, Transport, Clothing, Healthcare, Entertainment, Others.",
-                accent: "var(--accent-teal)",
-              },
-              {
-                num: "02",
-                title: "We weight it against CPI Urban",
-                body: "Your spend share per category is multiplied by the RBI/MOSPI CPI Urban YoY inflation for that category.",
-                accent: "var(--accent-orange)",
-              },
-              {
-                num: "03",
-                title: "See your real inflation rate",
-                body: "Compare your personal inflation to the national headline CPI and discover where your money is most pressured.",
-                accent: "var(--accent-lime)",
-              },
-            ].map((step) => (
-              <div
-                key={step.num}
-                style={{
-                  background: "var(--bg-card)",
-                  padding: "2rem 1.75rem",
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-              >
-                {/* Ghost watermark number */}
-                <span
-                  aria-hidden="true"
-                  style={{
-                    position: "absolute",
-                    top: "-0.5rem",
-                    right: "-0.25rem",
-                    fontSize: "7rem",
-                    fontFamily: "var(--font-display)",
-                    fontWeight: 800,
-                    color: step.accent,
-                    opacity: 0.06,
-                    lineHeight: 1,
-                    userSelect: "none",
-                    pointerEvents: "none",
-                  }}
-                >
-                  {step.num}
-                </span>
-                <p style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "0.65rem",
-                  fontWeight: 700,
-                  color: step.accent,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.14em",
-                  marginBottom: "0.75rem",
-                }}>
-                  Step {step.num}
-                </p>
-                <p style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "0.9rem", color: "var(--text-primary)", marginBottom: "0.6rem" }}>
-                  {step.title}
-                </p>
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--text-muted)", lineHeight: 1.7 }}>
-                  {step.body}
-                </p>
-              </div>
-            ))}
+          
+          {/* Decorative grid element */}
+          <div className="absolute bottom-0 right-0 w-24 h-24 border-l border-t border-[var(--frame-color)] flex items-center justify-center opacity-30">
+            <span className="font-mono text-xs">+</span>
           </div>
         </div>
 
-        <p style={{ textAlign: "center", marginTop: "3.5rem", fontSize: "0.68rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)", letterSpacing: "0.05em" }}>
-          CPI Urban data source: MOSPI (mospi.gov.in) · Base year 2012=100 · Urban India only
-        </p>
-      </div>
-    </main>
+        {/* Right Column - Input Form housed in grid */}
+        <div className="hero-cell bg-[#050403] relative">
+          <div className="cell-marker text-[var(--accent-teal)]">.02 // PARAMETERS</div>
+          
+          <div className="my-auto w-full max-w-lg mx-auto slide-up">
+            <div className="mb-8 pb-4 border-b border-[var(--grid-line-strong)] flex justify-between items-end">
+              <h3 className="font-display font-bold text-lg tracking-widest uppercase">Input Telemetry</h3>
+              <span className="font-mono text-[10px] text-accent-orange uppercase">Link Active</span>
+            </div>
+            
+            <SpendingForm />
+          </div>
+          
+          {/* Technical Corner lines */}
+          <div className="absolute top-0 right-0 w-8 h-8 border-l border-b border-[var(--accent-teal)] opacity-50" />
+          <div className="absolute bottom-0 left-0 w-8 h-8 border-r border-t border-[var(--accent-orange)] opacity-50" />
+        </div>
+      </section>
+
+      {/* Structural Footer / Info Bar */}
+      <section className="grid grid-cols-3 border-b border-[var(--frame-color)] text-xs font-mono uppercase tracking-widest text-text-dim">
+        <div className="p-4 border-r border-[var(--frame-color)] flex items-center gap-2">
+          <span className="w-2 h-2 bg-accent-lime block" /> System Online
+        </div>
+        <div className="p-4 border-r border-[var(--frame-color)] text-center">
+          Base Year: 2012=100
+        </div>
+        <div className="p-4 text-right">
+          Dataset: CPI Urban (mospi.gov.in)
+        </div>
+      </section>
+      
+      {/* Massive Outro Wordmark (like mindjoin footer) */}
+      <section className="p-8 pb-0 pt-16 flex flex-col items-center justify-center overflow-hidden h-[40vh] border-b border-[var(--frame-color)] relative">
+        <h2 className="font-display font-black text-[12vw] tracking-tighter leading-none text-transparent opacity-20"
+            style={{ WebkitTextStroke: "1px var(--text-muted)" }}>
+          INFLATION
+        </h2>
+        <div className="absolute bottom-8 font-mono text-xs text-accent-teal tracking-[0.3em]">
+          WHERE COMPUTATION MEETS WEALTH.
+        </div>
+      </section>
+    </div>
   );
 }

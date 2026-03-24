@@ -17,8 +17,8 @@ function Skeleton({ w = "100%", h = 24 }: { w?: string; h?: number }) {
   return (
     <div style={{
       width: w, height: h,
-      backgroundColor: "var(--bg-card-low)",
-      borderRadius: 2,
+      backgroundColor: "var(--bg-card)",
+      border: "1px solid var(--frame-color)",
       animation: "pulse 1.5s ease-in-out infinite",
     }} />
   );
@@ -79,148 +79,175 @@ export default function DashboardPage() {
   /* ── Loading skeleton ── */
   if (loading) {
     return (
-      <main style={{ minHeight: "100vh", backgroundColor: "var(--bg-primary)", padding: "2.5rem 1.5rem" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", gap: "2rem" }}>
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            <Skeleton h={36} w="45%" />
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1px" }}>
-              <Skeleton h={110} /><Skeleton h={110} /><Skeleton h={110} />
-            </div>
-            <Skeleton h={280} /><Skeleton h={250} /><Skeleton h={180} />
-          </div>
-          <Skeleton h={380} w="240px" />
-        </div>
-      </main>
+      <div className="w-full min-h-screen flex items-center justify-center border-b border-[var(--frame-color)]">
+        <Skeleton h={40} w="300px" />
+      </div>
     );
   }
 
   /* ── No data ── */
   if (needsMore) {
     return (
-      <main style={{ minHeight: "100vh", backgroundColor: "var(--bg-primary)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}>
-        <div style={{ textAlign: "center", maxWidth: 400 }}>
-          <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--accent-teal)", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "1rem" }}>
-            — No Data Yet —
+      <div className="w-full min-h-(100vh) flex items-center justify-center pad-grid border-b border-[var(--frame-color)]">
+        <div className="text-center">
+          <p className="font-mono text-xs text-accent-teal uppercase tracking-widest mb-4">
+            [ No Telemetry Data ]
           </p>
-          <h2 className="display-heading" style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>No spending data</h2>
-          <p style={{ color: "var(--text-muted)", marginBottom: "2rem", fontSize: "0.875rem", lineHeight: 1.7 }}>
-            Submit your monthly spending to see your personal inflation rate.
-          </p>
-          <Link href="/" className="btn-primary">← Add Spending Data</Link>
+          <h2 className="brutalist-heading text-4xl mb-4">Awaiting Input</h2>
+          <Link href="/" className="btn-primary mt-4">INITIALIZE DATA →</Link>
         </div>
-      </main>
+      </div>
     );
   }
 
   /* ── Error ── */
   if (error) {
     return (
-      <main style={{ minHeight: "100vh", backgroundColor: "var(--bg-primary)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}>
-        <div style={{ textAlign: "center", maxWidth: 400 }}>
-          <p style={{ color: "var(--accent-red)", marginBottom: "1.5rem", fontSize: "0.875rem" }}>{error}</p>
-          <button onClick={fetchAll} className="btn-primary">↺ Retry</button>
+      <div className="w-full min-h-(100vh) flex items-center justify-center pad-grid border-b border-[var(--frame-color)]">
+        <div className="text-center">
+          <p className="text-accent-red font-mono uppercase tracking-widest mb-4">[ ERR: {error} ]</p>
+          <button onClick={fetchAll} className="btn-primary">RETRY CONNECTION</button>
         </div>
-      </main>
+      </div>
     );
   }
 
   const isAbove = (latest?.difference ?? 0) >= 0;
 
   return (
-    <main style={{ minHeight: "100vh", backgroundColor: "var(--bg-primary)", padding: "2.5rem 1.5rem 5rem" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+    <div className="flex flex-col lg:flex-row w-full h-full">
 
-        {/* ── Header ── */}
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "2.5rem" }}>
-          <div>
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--accent-teal)", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "0.4rem" }}>
-              ◈ Personal Inflation Dashboard
+      {/* ── Main Data Column ── */}
+      <div className="flex-1 flex flex-col border-r border-[var(--frame-color)]">
+        
+        {/* Header Block */}
+        <div className="pad-grid border-b border-[var(--frame-color)] flex justify-between items-end relative overflow-hidden">
+          <div className="z-10">
+            <p className="font-mono text-[10px] text-accent-teal tracking-widest uppercase mb-2">
+              .01 // TELEMETRY REPORT
             </p>
-            <h1 className="display-heading" style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", marginBottom: "0.25rem" }}>
-              Your Inflation Report
+            <h1 className="brutalist-heading" style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)" }}>
+              DASHBOARD
             </h1>
-            <p style={{ fontSize: "0.78rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-              {history.length} month{history.length !== 1 ? "s" : ""} of data · latest: {latest?.month ?? "—"}
+          </div>
+          <div className="z-10 text-right">
+            <p className="font-mono text-xs text-text-muted">
+              {history.length} RECORDS · LATEST: {latest?.month}
             </p>
           </div>
-          <Link href="/" className="btn-secondary">+ Add Month</Link>
+          {/* Decorative giant digit */}
+          <div className="absolute -bottom-8 -right-4 font-display font-black text-[10rem] text-[var(--frame-color)] opacity-20 leading-none select-none">
+            01
+          </div>
         </div>
 
-        {/* ── 2-col layout ── */}
-        <div style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start" }}>
-
-          {/* ── Main column ── */}
-          <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-
-            {/* Stat cards */}
-            {latest && (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1px", background: "rgba(93,64,56,0.2)" }}>
-                <div className="stat-card">
-                  <p style={{ fontFamily: "var(--font-display)", fontSize: "0.62rem", fontWeight: 700, color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.14em" }}>Your Inflation</p>
-                  <p className="font-mono-numbers" style={{ fontSize: "2.6rem", fontWeight: 700, color: isAbove ? "var(--accent-orange)" : "var(--accent-lime)", lineHeight: 1, marginTop: "0.25rem" }}>
-                    <CountUp end={latest.personal_inflation_rate} decimals={2} duration={1.5} suffix="%" />
-                  </p>
-                  <p style={{ fontSize: "0.7rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)", marginTop: "0.2rem" }}>personal rate</p>
-                </div>
-
-                <div className="stat-card">
-                  <p style={{ fontFamily: "var(--font-display)", fontSize: "0.62rem", fontWeight: 700, color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.14em" }}>National CPI</p>
-                  <p className="font-mono-numbers" style={{ fontSize: "2.6rem", fontWeight: 700, color: "var(--text-muted)", lineHeight: 1, marginTop: "0.25rem" }}>
-                    <CountUp end={latest.national_cpi_rate} decimals={2} duration={1.5} suffix="%" />
-                  </p>
-                  <p style={{ fontSize: "0.7rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)", marginTop: "0.2rem" }}>RBI CPI Urban YoY</p>
-                </div>
-
-                <div className="stat-card">
-                  <p style={{ fontFamily: "var(--font-display)", fontSize: "0.62rem", fontWeight: 700, color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.14em" }}>Difference</p>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.2rem", marginTop: "0.25rem" }}>
-                    <span style={{ fontSize: "1.1rem", color: isAbove ? "var(--accent-orange)" : "var(--accent-lime)" }}>{isAbove ? "↑" : "↓"}</span>
-                    <p className="font-mono-numbers" style={{ fontSize: "2.6rem", fontWeight: 700, color: isAbove ? "var(--accent-orange)" : "var(--accent-lime)", lineHeight: 1 }}>
-                      <CountUp end={Math.abs(latest.difference)} decimals={2} duration={1.5} suffix=" pp" />
-                    </p>
-                  </div>
-                  <p style={{ fontSize: "0.7rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)", marginTop: "0.2rem" }}>{isAbove ? "above" : "below"} national avg</p>
-                </div>
-              </div>
-            )}
-
-            {/* Chart */}
-            {history.length >= 1 && <InflationChart data={history} />}
-
-            {/* Category breakdown */}
-            {latest?.category_contributions && (
-              <CategoryBreakdown contributions={latest.category_contributions} />
-            )}
-
-            {/* Forecast */}
-            {Object.keys(forecasts).length > 0 && <ForecastPanel forecasts={forecasts} />}
-
-            {/* Insights */}
-            {insights.length > 0 && <InsightCards cards={insights} />}
-
-            {/* Anomalies */}
-            <AnomalyBadge anomalies={anomalies} />
-
-            {/* Entertainment */}
-            {latest && <EntertainmentFlag amount={latest.entertainment_spend} />}
-
-            {/* What-If CTA */}
-            <div style={{ textAlign: "center", paddingTop: "1rem" }}>
-              <Link href="/whatif" className="btn-primary" style={{ fontSize: "0.8rem", letterSpacing: "0.1em" }}>
-                Run What-If Simulator →
-              </Link>
+        {/* ── TOP KPIs (Grid row) ── */}
+        {latest && (
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-[var(--frame-color)] bg-[var(--bg-card)]">
+            
+            {/* KPI 1 */}
+            <div className="p-6 md:p-8 border-b md:border-b-0 md:border-r border-[var(--frame-color)] relative group">
+              <div className="absolute top-2 right-2 font-mono text-[9px] text-text-dim">+</div>
+              <p className="font-display text-[10px] uppercase tracking-[0.2em] text-text-dim font-bold mb-4">
+                Personal Rate
+              </p>
+              <p className="font-mono text-5xl font-bold tracking-tighter" style={{ color: isAbove ? "var(--accent-orange)" : "var(--accent-lime)" }}>
+                <CountUp end={latest.personal_inflation_rate} decimals={2} duration={1.5} />
+                <span className="text-2xl ml-1">%</span>
+              </p>
             </div>
+
+            {/* KPI 2 */}
+            <div className="p-6 md:p-8 border-b md:border-b-0 md:border-r border-[var(--frame-color)] relative group">
+              <div className="absolute top-2 right-2 font-mono text-[9px] text-text-dim">+</div>
+              <p className="font-display text-[10px] uppercase tracking-[0.2em] text-text-dim font-bold mb-4">
+                National Baseline
+              </p>
+              <p className="font-mono text-5xl font-bold text-text-muted tracking-tighter">
+                <CountUp end={latest.national_cpi_rate} decimals={2} duration={1.5} />
+                <span className="text-2xl ml-1">%</span>
+              </p>
+            </div>
+
+            {/* KPI 3 */}
+            <div className="p-6 md:p-8 relative group">
+              <div className="absolute top-2 right-2 font-mono text-[9px] text-text-dim">+</div>
+              <p className="font-display text-[10px] uppercase tracking-[0.2em] text-text-dim font-bold mb-4">
+                Variance
+              </p>
+              <p className="font-mono text-5xl font-bold tracking-tighter flex items-end" style={{ color: isAbove ? "var(--accent-orange)" : "var(--accent-lime)" }}>
+                <span className="text-2xl mr-2 mb-1">{isAbove ? "↑" : "↓"}</span>
+                <CountUp end={Math.abs(latest.difference)} decimals={2} duration={1.5} />
+                <span className="text-xl ml-2 mb-1 text-text-dim uppercase tracking-widest">PP</span>
+              </p>
+            </div>
+
+          </div>
+        )}
+
+        {/* ── Main content sections ── */}
+        <div className="flex flex-col">
+          
+          <div className="pad-grid border-b border-[var(--frame-color)] relative">
+            <div className="absolute top-0 left-0 bg-[var(--frame-color)] text-[var(--bg-primary)] text-[9px] font-mono px-2 py-0.5">CHART.01</div>
+            {history.length >= 1 && <InflationChart data={history} />}
           </div>
 
-          {/* ── Sidebar ── */}
-          {Object.keys(rawSpending).length > 0 && (
+          <div className="pad-grid border-b border-[var(--frame-color)] relative">
+            <div className="absolute top-0 left-0 bg-[var(--frame-color)] text-[var(--bg-primary)] text-[9px] font-mono px-2 py-0.5">ALLOCATION.02</div>
+            {latest?.category_contributions && <CategoryBreakdown contributions={latest.category_contributions} />}
+          </div>
+
+          {Object.keys(forecasts).length > 0 && (
+            <div className="pad-grid border-b border-[var(--frame-color)] relative">
+               <div className="absolute top-0 left-0 bg-[var(--frame-color)] text-[var(--bg-primary)] text-[9px] font-mono px-2 py-0.5">PREDICTION.03</div>
+              <ForecastPanel forecasts={forecasts} />
+            </div>
+          )}
+
+          {insights.length > 0 && (
+            <div className="pad-grid border-b border-[var(--frame-color)] relative">
+               <div className="absolute top-0 left-0 bg-[var(--frame-color)] text-[var(--bg-primary)] text-[9px] font-mono px-2 py-0.5">ANALYSIS.04</div>
+              <InsightCards cards={insights} />
+            </div>
+          )}
+
+          <div className="pad-grid border-b border-[var(--frame-color)] relative">
+             <div className="absolute top-0 left-0 bg-[var(--frame-color)] text-[var(--bg-primary)] text-[9px] font-mono px-2 py-0.5">ANOMALY.05</div>
+            <AnomalyBadge anomalies={anomalies} />
+          </div>
+
+          {latest && latest.entertainment_spend > 0 && (
+            <div className="pad-grid border-b border-[var(--frame-color)] relative">
+               <div className="absolute top-0 left-0 bg-[var(--frame-color)] text-[var(--bg-primary)] text-[9px] font-mono px-2 py-0.5">FLAG.06</div>
+              <EntertainmentFlag amount={latest.entertainment_spend} />
+            </div>
+          )}
+
+        </div>
+      </div>
+
+      {/* ── Sidebar Column ── */}
+      <div className="w-full lg:w-[320px] lg:min-h-[calc(100vh-3.5rem)] bg-[var(--bg-card)] relative">
+        <div className="sticky top-0 h-full">
+          {Object.keys(rawSpending).length > 0 ? (
             <SpendingSidebar
               spending={rawSpending}
               month={(rawSpending.month as unknown as string) ?? latest?.month ?? ""}
             />
+          ) : (
+            <div className="p-8 text-center text-text-dim font-mono text-xs">No Sidebar Data</div>
           )}
+
+          {/* Action Footer in Sidebar */}
+          <div className="absolute bottom-0 left-0 w-full p-6 border-t border-[var(--frame-color)] bg-[var(--bg-card-low)]">
+            <Link href="/whatif" className="btn-primary w-full text-center flex justify-center py-4">
+              LAUNCH SIMULATOR →
+            </Link>
+          </div>
         </div>
       </div>
-    </main>
+
+    </div>
   );
 }

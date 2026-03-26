@@ -1,6 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import SpendingForm from "@/components/SpendingForm";
+import BusinessForm from "@/components/BusinessForm";
 
 export default function Home() {
+  const [mode, setMode] = useState<"individual" | "business">("individual");
+
   return (
     <div className="flex flex-col w-full h-full">
       {/* Structural Hero Grid */}
@@ -33,12 +39,27 @@ export default function Home() {
           <div className="cell-marker text-[var(--accent-teal)]">.02 // PARAMETERS</div>
           
           <div className="my-auto w-full max-w-lg mx-auto slide-up">
-            <div className="mb-8 pb-4 border-b border-[var(--grid-line-strong)] flex justify-between items-end">
+            <div className="mb-4 pb-4 border-b border-[var(--grid-line-strong)] flex justify-between items-end">
               <h3 className="font-display font-bold text-lg tracking-widest uppercase">Input Telemetry</h3>
               <span className="font-mono text-[10px] text-accent-orange uppercase">Link Active</span>
             </div>
+
+            <div className="flex gap-2 mb-6 border border-[var(--frame-color)] p-1 bg-[var(--bg-card)]">
+              <button 
+                onClick={() => setMode("individual")}
+                className={`flex-1 py-2 font-mono text-xs uppercase tracking-wider transition-colors ${mode === "individual" ? "bg-[var(--accent-teal)] text-black font-bold" : "text-[var(--text-muted)] hover:text-white"}`}
+              >
+                I am an Individual
+              </button>
+              <button 
+                onClick={() => setMode("business")}
+                className={`flex-1 py-2 font-mono text-xs uppercase tracking-wider transition-colors ${mode === "business" ? "bg-[var(--accent-teal)] text-black font-bold" : "text-[var(--text-muted)] hover:text-white"}`}
+              >
+                I am a Business
+              </button>
+            </div>
             
-            <SpendingForm />
+            {mode === "individual" ? <SpendingForm /> : <BusinessForm />}
           </div>
           
           {/* Technical Corner lines */}

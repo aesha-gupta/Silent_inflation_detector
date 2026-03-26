@@ -29,4 +29,10 @@ export const api = {
     request<{ insights: any[]; month: string }>('/insights/'),
   simulateWhatIf: (data: object) =>
     request<any>('/whatif/', { method: 'POST', body: JSON.stringify(data) }),
+  getVulnerabilityScore: () =>
+    request<any>('/vulnerability/'),
+  getBusinessSectors: () =>
+    request<any>('/business/sectors'),
+  getBusinessInflation: (data: object) =>
+    request<any>('/business/inflation', { method: 'POST', body: JSON.stringify(data) }),
 }

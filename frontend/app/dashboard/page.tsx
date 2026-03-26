@@ -11,6 +11,7 @@ import InsightCards from "@/components/InsightCards";
 import AnomalyBadge from "@/components/AnomalyBadge";
 import EntertainmentFlag from "@/components/EntertainmentFlag";
 import SpendingSidebar from "@/components/SpendingSidebar";
+import VulnerabilityScore from "@/components/VulnerabilityScore";
 import { InflationResult, AnomalyResult, InsightCard, ForecastPoint } from "@/types";
 
 function Skeleton({ w = "100%", h = 24 }: { w?: string; h?: number }) {
@@ -188,6 +189,8 @@ export default function DashboardPage() {
         {/* ── Main content sections ── */}
         <div className="flex flex-col">
           
+          <VulnerabilityScore />
+
           <div className="pad-grid border-b border-[var(--frame-color)] relative">
             <div className="absolute top-0 left-0 bg-[var(--frame-color)] text-[var(--bg-primary)] text-[9px] font-mono px-2 py-0.5">CHART.01</div>
             {history.length >= 1 && <InflationChart data={history} />}

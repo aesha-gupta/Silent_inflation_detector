@@ -53,3 +53,29 @@ export interface WhatIfResult {
   delta: number
   message: string
 }
+
+export interface VulnerabilityResult {
+  score: number
+  band: 'Low' | 'Medium' | 'High'
+  color: 'green' | 'amber' | 'red'
+  dominant_driver: string
+  message: string
+  category_contributions: Record<string, number>
+  month: string
+}
+
+export interface BusinessInflationResult {
+  business_inflation_rate: number
+  wpi_general_rate: number
+  difference: number
+  category_contributions: Record<string, number>
+  top_cost_driver: string
+  should_raise_prices: 'Yes' | 'Monitor' | 'No'
+  raise_prices_message: string
+  sector_display_name: string
+}
+
+export interface SectorDefinition {
+  display_name: string
+  categories: Record<string, string>
+}

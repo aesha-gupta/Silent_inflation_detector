@@ -99,6 +99,39 @@ export default function BusinessWhatIfSimulator() {
   const isBetter = delta < 0;
   const isNeutral = delta === 0;
 
+  const getDynamicMessage = () => {
+    if (!baseParams || baseAmt === newAmount) return null;
+    const catName = activeCategories[category as keyof typeof activeCategories] || category;
+    const change_percent = baseAmt > 0 ? ((newAmount - baseAmt) / baseAmt) * 100 : 0;
+    
+    const spent_more = newAmount > baseAmt;
+    const spent_less = newAmount < baseAmt;
+    const inflation_rose = delta > 0.005;
+    const inflation_fell = delta < -0.005;
+
+    if (Math.abs(delta) < 0.005) {
+      return `Changing ${catName} allocation spending has virtually no effect on your overall business inflation — this category carries a small weight or has an inflation rate very close to your average.`;
+    }
+
+    if (spent_more && inflation_rose) {
+      return `A ${Math.abs(change_percent).toFixed(0)}% rise in ${catName} allocation increases your business inflation by ${Math.abs(delta).toFixed(2)} pp. ${catName} inflation is above your current average, so spending more here directly raises your cost burden.`;
+    }
+
+    if (spent_less && inflation_fell) {
+      return `A ${Math.abs(change_percent).toFixed(0)}% cut in ${catName} allocation reduces your business inflation by ${Math.abs(delta).toFixed(2)} pp. Spending less on a higher-inflation business category lowers its weight, pulling your overall rate down.`;
+    }
+
+    if (spent_less && inflation_rose) {
+      return `⚠️ Even though you cut ${catName} costs by ${Math.abs(change_percent).toFixed(0)}%, your business inflation RISES by ${Math.abs(delta).toFixed(2)} pp. Why: ${catName} carries a LOWER inflation rate than your other operational categories. Reducing it shifts proportional weight onto higher-inflation areas, nudging your weighted average up. This shows your inflation exposure is driven by other overheads — cutting those would have a much larger positive impact.`;
+    }
+
+    if (spent_more && inflation_fell) {
+      return `⚠️ Even though you increased ${catName} costs by ${Math.abs(change_percent).toFixed(0)}%, your business inflation FALLS by ${Math.abs(delta).toFixed(2)} pp. Why: ${catName} carries a LOWER WPI inflation rate than your other categories. Spending more on it dilutes the weight of higher-inflation categories, pulling your weighted average down. This is NOT a recommendation to spend more on ${catName}. Increasing operational spending just to reduce a blended percentage is not financially sound.`;
+    }
+
+    return `A change in ${catName} spending shifts your business inflation by ${delta > 0 ? "+" : ""}${delta.toFixed(2)} pp.`;
+  };
+
   return (
     <div className="max-w-3xl mx-auto w-full p-6 md:p-12">
       <div className="mb-8">
@@ -213,9 +246,10 @@ export default function BusinessWhatIfSimulator() {
           </div>
           
           {/* Analysis Note */}
-          <div className="p-4 border-l-2 border-[var(--accent-orange)] bg-[var(--accent-orange)]/5">
+          <div className="p-4 border-l-2 border-[var(--accent-teal)] bg-[var(--accent-teal)]/5">
             <p className="font-mono text-xs text-[var(--text-muted)] leading-relaxed">
-              <span className="text-[var(--accent-orange)] font-bold">ANALYST NOTE:</span> This simulation shows the mathematical property of weighted averages — shifting spend toward items with lower base inflation rates lowers your <em>aggregate</em> rate. <strong className="text-[var(--text-primary)]">This is not a recommendation to spend more on those overheads just to reduce the rate.</strong> Good margins come from reducing total absolute costs, evaluating supply chain contracts, and identifying cost efficiency, not just chasing a lower blended percentage.
+              <span className="text-[var(--accent-teal)] font-bold">ANALYSIS: </span> 
+              {getDynamicMessage() || "Adjust the cost slider above to view how changing your spending impacts your blended business inflation rate."}
             </p>
           </div>
         </div>

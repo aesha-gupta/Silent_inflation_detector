@@ -1,34 +1,18 @@
-# ── Python ──────────────────────────────────────
+# Python
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
-*.pyd
-.Python
-*.egg
-*.egg-info/
-dist/
-build/
-
-# ── Database ─────────────────────────────────────
-*.db
-*.sqlite
-*.sqlite3
-
-# ── Environment ──────────────────────────────────
 .env
-.env.local
-.env.*.local
+*.db
 
-# ── Next.js ──────────────────────────────────────
+# Frontend
 frontend/.next/
-frontend/out/
 frontend/node_modules/
-frontend/.npm
+frontend/.env.local
 
-# ── OS / Editor ──────────────────────────────────
+# Data
+backend/data/spending.db
+
+# OS
 .DS_Store
 Thumbs.db
-.vscode/
-.idea/
-*.suo
-*.user

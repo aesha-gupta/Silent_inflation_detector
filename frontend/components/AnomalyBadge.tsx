@@ -2,12 +2,36 @@
 
 import { AnomalyResult } from "@/types";
 
-interface AnomalyBadgeProps { anomalies: AnomalyResult[]; }
+interface AnomalyBadgeProps {
+  anomalies: AnomalyResult[];
+  methodsRun?: string[];
+}
 
-export default function AnomalyBadge({ anomalies }: AnomalyBadgeProps) {
+export default function AnomalyBadge({ anomalies, methodsRun = [] }: AnomalyBadgeProps) {
+  const methodLabel = (method?: string) => {
+    if (method === "isolation_forest") return "Isolation Forest";
+    if (method === "zscore") return "Z-Score";
+    if (method === "small_sample_guardrail") return "Small-Sample Guardrail";
+    return "Unknown";
+  };
+
+  const methodsSummary = methodsRun.length > 0
+    ? methodsRun.map(methodLabel).join(" + ")
+    : "Need at least 3 months (Z-Score) or 6 months (Isolation Forest)";
+
   return (
     <div className="card">
       <p className="section-label">Anomaly Detection</p>
+      <p style={{
+        fontFamily: "var(--font-mono)",
+        fontSize: "0.68rem",
+        letterSpacing: "0.08em",
+        textTransform: "uppercase",
+        color: "var(--text-dim)",
+        marginBottom: "0.75rem",
+      }}>
+        Detectors: {methodsSummary}
+      </p>
 
       {anomalies.length === 0 ? (
         <div style={{
@@ -26,7 +50,7 @@ export default function AnomalyBadge({ anomalies }: AnomalyBadgeProps) {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.82rem" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid rgba(93,64,56,0.25)" }}>
-                {["Month", "Category", "Direction", "Z-Score", "Message"].map((h) => (
+                {["Method", "Confidence", "Month", "Category", "Direction", "Score", "Message"].map((h) => (
                   <th key={h} style={{
                     padding: "0.5rem 0.75rem", textAlign: "left",
                     fontFamily: "var(--font-display)", fontSize: "0.6rem", fontWeight: 700,
@@ -46,6 +70,8 @@ export default function AnomalyBadge({ anomalies }: AnomalyBadgeProps) {
                   onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "rgba(93,64,56,0.12)")}
                   onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "transparent")}
                 >
+                  <td style={{ padding: "0.6rem 0.75rem", fontFamily: "var(--font-display)", fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>{methodLabel(a.method)}</td>
+                  <td style={{ padding: "0.6rem 0.75rem", fontFamily: "var(--font-display)", fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>{a.confidence ?? "-"}</td>
                   <td style={{ padding: "0.6rem 0.75rem", fontFamily: "var(--font-mono)", fontSize: "0.78rem", color: "var(--text-primary)" }}>{a.month}</td>
                   <td style={{ padding: "0.6rem 0.75rem", fontFamily: "var(--font-display)", fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "capitalize", letterSpacing: "0.05em" }}>{a.category}</td>
                   <td style={{ padding: "0.6rem 0.75rem" }}>

@@ -33,6 +33,8 @@ export interface ForecastResult {
 
 export interface AnomalyResult {
   month: string
+  method?: 'zscore' | 'isolation_forest' | 'small_sample_guardrail'
+  confidence?: 'low' | 'medium' | 'high'
   category: string
   is_anomaly: boolean
   zscore: number
@@ -73,6 +75,10 @@ export interface BusinessInflationResult {
   should_raise_prices: 'Yes' | 'Monitor' | 'No'
   raise_prices_message: string
   sector_display_name: string
+}
+
+export interface BusinessInflationHistoryPoint extends BusinessInflationResult {
+  month: string
 }
 
 export interface SectorDefinition {

@@ -9,7 +9,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
-from models.schemas import MonthlySpending
+from models.schemas import MonthlySpending, SpendingHistory
 
 router = APIRouter(prefix="/spending", tags=["spending"])
 
@@ -66,6 +66,38 @@ def submit_spending(body: MonthlySpending) -> dict[str, Any]:
     return {"status": "ok", "month": body.month, "total_entries": count}
 
 
+@router.post("/batch")
+def submit_spending_batch(body: SpendingHistory) -> dict[str, Any]:
+    if not body.entries:
+        raise HTTPException(status_code=400, detail="entries must contain at least one month.")
+
+    try:
+        with _get_conn() as conn:
+            for entry in body.entries:
+                conn.execute(
+                    """
+                    INSERT OR REPLACE INTO spending
+                        (month, food, housing, transport, clothing, healthcare, entertainment, others)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        entry.month, entry.food, entry.housing, entry.transport,
+                        entry.clothing, entry.healthcare, entry.entertainment, entry.others,
+                    ),
+                )
+            conn.commit()
+            count = conn.execute("SELECT COUNT(*) FROM spending").fetchone()[0]
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Database error: {exc}") from exc
+
+    return {
+        "status": "ok",
+        "months_saved": len(body.entries),
+        "saved_months": [entry.month for entry in body.entries],
+        "total_entries": count,
+    }
+
+
 @router.get("/")
 def get_spending_history() -> dict[str, Any]:
     try:
@@ -99,3 +131,18 @@ def delete_spending(month: str) -> dict[str, str]:
         raise HTTPException(status_code=500, detail=f"Database error: {exc}") from exc
 
     return {"status": "deleted", "month": month}
+
+def get_all_spending() -> list:
+    """
+    Helper used by other routers to fetch all spending entries from SQLite.
+    Returns list of dicts sorted by month ascending.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM spending ORDER BY month ASC")
+    rows = cursor.fetchall()
+    conn.close()
+    columns = ["month", "food", "housing", "transport", "clothing",
+               "healthcare", "entertainment", "others"]
+    return [dict(zip(columns, row)) for row in rows]
+

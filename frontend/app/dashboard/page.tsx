@@ -14,6 +14,11 @@ import SpendingSidebar from "@/components/SpendingSidebar";
 import VulnerabilityScore from "@/components/VulnerabilityScore";
 import { InflationResult, AnomalyResult, InsightCard, ForecastPoint } from "@/types";
 
+type AnomalyApiResponse = {
+  anomalies?: AnomalyResult[];
+  methods_run?: string[];
+};
+
 function Skeleton({ w = "100%", h = 24 }: { w?: string; h?: number }) {
   return (
     <div style={{
@@ -33,6 +38,7 @@ export default function DashboardPage() {
   const [rawSpending, setRawSpending] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [needsMore, setNeedsMore] = useState(false);
+  const [anomalyMethodsRun, setAnomalyMethodsRun] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const fetchAll = async () => {
@@ -42,12 +48,13 @@ export default function DashboardPage() {
     try {
       const [histRes, anomalyRes, insightRes, spendRes] = await Promise.all([
         api.getInflationHistory(),
-        api.getAnomalies("zscore").catch(() => ({ anomalies: [] })),
+        api.getAnomalies("auto").catch(() => ({ anomalies: [], methods_run: [] } as AnomalyApiResponse)),
         api.getInsights().catch(() => ({ insights: [] })),
         api.getSpendingHistory().catch(() => ({ entries: [] })),
       ]);
       setHistory(histRes.history);
-      setAnomalies(anomalyRes.anomalies ?? []);
+      setAnomalies((anomalyRes as AnomalyApiResponse).anomalies ?? []);
+      setAnomalyMethodsRun((anomalyRes as AnomalyApiResponse).methods_run ?? []);
       setInsights(insightRes.insights ?? []);
       const entries = (spendRes as any).entries ?? [];
       if (entries.length > 0) setRawSpending(entries[entries.length - 1]);
@@ -217,7 +224,7 @@ export default function DashboardPage() {
 
           <div className="pad-grid border-b border-[var(--frame-color)] relative">
              <div className="absolute top-0 left-0 bg-[var(--frame-color)] text-[var(--bg-primary)] text-[9px] font-mono px-2 py-0.5">ANOMALY.05</div>
-            <AnomalyBadge anomalies={anomalies} />
+            <AnomalyBadge anomalies={anomalies} methodsRun={anomalyMethodsRun} />
           </div>
 
           {latest && latest.entertainment_spend > 0 && (

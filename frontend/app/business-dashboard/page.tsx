@@ -4,22 +4,33 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import CountUp from "react-countup";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
-import { BusinessInflationResult } from "@/types";
+import { BusinessInflationHistoryPoint, BusinessInflationResult } from "@/types";
 
 export default function BusinessDashboardPage() {
   const [result, setResult] = useState<BusinessInflationResult | null>(null);
   const [month, setMonth] = useState("");
+  const [historyCount, setHistoryCount] = useState(1);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     try {
+      const storedHistory = sessionStorage.getItem("businessHistory");
       const stored = sessionStorage.getItem("businessResult");
       const storedMonth = sessionStorage.getItem("businessMonth");
+      if (storedHistory) {
+        const parsedHistory = JSON.parse(storedHistory) as BusinessInflationHistoryPoint[];
+        if (parsedHistory.length > 0) {
+          const latest = parsedHistory[parsedHistory.length - 1];
+          setResult(latest);
+          setMonth(latest.month);
+          setHistoryCount(parsedHistory.length);
+        }
+      }
       if (stored) {
-        setResult(JSON.parse(stored));
+        setResult((prev) => prev ?? JSON.parse(stored));
       }
       if (storedMonth) {
-        setMonth(storedMonth);
+        setMonth((prev) => prev || storedMonth);
       }
     } catch (e) {
       console.error(e);
@@ -86,7 +97,7 @@ export default function BusinessDashboardPage() {
           </div>
           <div className="z-10 text-right">
             <p className="font-mono text-xs text-[var(--text-muted)]">
-              PERIOD: {month}
+              PERIOD: {month} {historyCount > 1 ? `· ${historyCount} RECORDS` : ""}
             </p>
           </div>
         </div>

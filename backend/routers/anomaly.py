@@ -10,6 +10,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Query
 
 from services.anomaly_service import (
+    detect_anomalies_small_sample_guardrail,
     detect_anomalies_zscore,
     detect_anomalies_isolation_forest,
 )
@@ -18,7 +19,7 @@ router = APIRouter(prefix="/anomaly", tags=["anomaly"])
 
 DB_PATH = Path(__file__).parent.parent / "spending.db"
 
-VALID_METHODS = {"zscore", "isolation_forest"}
+VALID_METHODS = {"zscore", "isolation_forest", "auto"}
 
 
 def _get_conn() -> sqlite3.Connection:
@@ -29,7 +30,7 @@ def _get_conn() -> sqlite3.Connection:
 
 @router.get("/")
 def get_anomalies(
-    method: str = Query(default="zscore"),
+    method: str = Query(default="auto"),
 ) -> dict[str, Any]:
     if method not in VALID_METHODS:
         raise HTTPException(
@@ -46,21 +47,35 @@ def get_anomalies(
         raise HTTPException(status_code=500, detail=f"Database error: {exc}") from exc
 
     n = len(rows)
-    if n < 3:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Need at least 3 months of data. You have submitted {n}.",
-        )
-
     history = [dict(r) for r in rows]
 
-    if method == "zscore":
-        anomalies = detect_anomalies_zscore(history)
+    def _run_selected(selected: str) -> list[dict]:
+        if selected == "zscore":
+            return detect_anomalies_zscore(history) if n >= 3 else []
+        return detect_anomalies_isolation_forest(history) if n >= 6 else []
+
+    methods_run: list[str]
+    if method == "auto":
+        methods_run = []
+        anomalies: list[dict] = []
+        if 2 <= n <= 5:
+            methods_run.append("small_sample_guardrail")
+            anomalies.extend(detect_anomalies_small_sample_guardrail(history))
+        if n >= 3:
+            methods_run.append("zscore")
+            anomalies.extend(_run_selected("zscore"))
+        if n >= 6:
+            methods_run.append("isolation_forest")
+            anomalies.extend(_run_selected("isolation_forest"))
     else:
-        anomalies = detect_anomalies_isolation_forest(history)
+        methods_run = [method] if ((method == "zscore" and n >= 3) or (method == "isolation_forest" and n >= 6)) else []
+        anomalies = _run_selected(method)
 
     return {
         "method": method,
+        "months_available": n,
+        "minimum_months": {"small_sample_guardrail": 2, "zscore": 3, "isolation_forest": 6},
+        "methods_run": methods_run,
         "total_flagged": len(anomalies),
         "anomalies": anomalies,
     }

@@ -115,11 +115,12 @@ The app ships with simulated CPI data for development. To use real MOSPI data:
 |---|---|---|
 | `GET` | `/health` | Health check + CPI status |
 | `POST` | `/spending/` | Submit monthly spending |
+| `POST` | `/spending/batch` | Submit multiple months of spending in one request |
 | `GET` | `/spending/` | Fetch spending history |
 | `GET` | `/inflation/history/all` | Personal inflation for all months |
 | `GET` | `/inflation/national/{month}` | National CPI for a month |
 | `GET` | `/forecast/{category}` | 6-month spending forecast |
-| `GET` | `/anomaly/` | Anomaly detection (zscore / isolation_forest) |
+| `GET` | `/anomaly/` | Anomaly detection (`auto`, `zscore`, `isolation_forest`) |
 | `GET` | `/insights/` | Auto-generated insight cards |
 | `POST` | `/whatif/` | What-If simulation |
 

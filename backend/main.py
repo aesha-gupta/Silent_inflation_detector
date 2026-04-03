@@ -44,3 +44,11 @@ def health_check() -> dict:
         cpi_loaded = False
 
     return {"status": "ok", "cpi_data_loaded": cpi_loaded}
+
+from routers import vulnerability          # add to imports
+app.include_router(vulnerability.router)   # add after existing routers
+
+from routers import business
+app.include_router(business.router)
+
+

@@ -15,6 +15,8 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 export const api = {
   submitSpending: (data: object) =>
     request('/spending/', { method: 'POST', body: JSON.stringify(data) }),
+  submitSpendingBatch: (entries: object[]) =>
+    request('/spending/batch', { method: 'POST', body: JSON.stringify({ entries }) }),
   getSpendingHistory: () =>
     request<{ entries: any[]; message?: string }>('/spending/'),
   getInflationHistory: () =>
@@ -23,7 +25,7 @@ export const api = {
     request<any>(`/inflation/${month}`),
   getForecast: (category: string, periods = 6) =>
     request<any>(`/forecast/${category}?periods=${periods}`),
-  getAnomalies: (method = 'zscore') =>
+  getAnomalies: (method = 'auto') =>
     request<any>(`/anomaly/?method=${method}`),
   getInsights: () =>
     request<{ insights: any[]; month: string }>('/insights/'),
@@ -35,4 +37,6 @@ export const api = {
     request<any>('/business/sectors'),
   getBusinessInflation: (data: object) =>
     request<any>('/business/inflation', { method: 'POST', body: JSON.stringify(data) }),
+  getBusinessInflationBatch: (data: object) =>
+    request<any>('/business/inflation/batch', { method: 'POST', body: JSON.stringify(data) }),
 }

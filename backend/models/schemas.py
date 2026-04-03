@@ -62,6 +62,8 @@ class ForecastResult(BaseModel):
 
 class AnomalyResult(BaseModel):
     month: str
+    method: Optional[str] = None
+    confidence: Optional[str] = None
     category: str
     is_anomaly: bool = True
     zscore: float
